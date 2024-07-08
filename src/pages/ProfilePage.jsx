@@ -56,7 +56,7 @@ const ProfilePage = () => {
             let user = null;
             if (userInSession) {
                 user = JSON.parse(userInSession);
-                user.user.profilePicture = import.meta.env.VITE_SERVER_DOMAIN + response.data.data;
+                user.user.profilePicture =  response.data.data;
                 localStorage.setItem("user", JSON.stringify(user)); // Make sure to set "user" with JSON.stringify
             }
 

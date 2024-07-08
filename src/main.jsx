@@ -12,8 +12,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
 
     <App />
-    {/* <ToastContainer autoClose={4000} /> */}
-    <ToastContainer />
+    <ToastContainer autoClose={1000} />
+    {/* <ToastContainer /> */}
 
   </Provider>
 

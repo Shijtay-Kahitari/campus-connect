@@ -133,6 +133,7 @@ const authSlice = createSlice({
       state.user = action?.payload?.data;
     });
     builder.addCase(login.fulfilled, (state, action) => {
+      
       localStorage.setItem("user", JSON.stringify(action?.payload?.data));
       localStorage.setItem("isLoggedIn", true);
       state.isLoggedIn = true;

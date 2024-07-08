@@ -44,7 +44,7 @@ const Nav = () => {
 
                                         <img
                                             className="h-10 w-10 rounded-full object-contain"
-                                            src={user?.user?.profilePicture}
+                                            src={import.meta.env.VITE_SERVER_DOMAIN+user?.user?.profilePicture}
                                             alt="Jese Leos"
                                         />
 
