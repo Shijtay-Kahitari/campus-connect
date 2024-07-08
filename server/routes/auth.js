@@ -49,7 +49,7 @@ router.post("/register", async (req, res) => {
       },
     };
 
-    console.log("the payload is " , payload);
+    console.log("the payload is ", payload);
 
     jwt.sign(
       payload,
@@ -64,10 +64,17 @@ router.post("/register", async (req, res) => {
           user: {
             id: user.id,
             role: user.profile.role,
+            profilePicture: user.profilePicture,
+            name :user.profile.fname
+
           },
         };
 
-        res.status(200).json({ success: true, data: dataToSend });
+        res.status(200).json({
+          success: true,
+          data: dataToSend,
+          message: "sign-up successfully",
+        });
       }
     );
   } catch (error) {
@@ -84,23 +91,28 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ "profile.email": email });
+    console.log(user);
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({ success: false, error: "User not exist" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user?.profile?.password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+      return res.status(400).json({ success: false, error: "wrong password" });
     }
 
     const payload = {
       user: {
         id: user.id,
+        role: user.profile.role,
+        email: user.profile.email,
       },
     };
+
+    console.log("the payload is ", payload);
 
     jwt.sign(
       payload,
@@ -108,12 +120,30 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1h" },
       (err, token) => {
         if (err) throw err;
-        res.json({ token });
+        // Return a 200 Created status along with the token and success true
+
+        const dataToSend = {
+          token,
+          user: {
+            id: user.id,
+            role: user.profile.role,
+            profilePicture: user.profilePicture,
+            name: user.profile.fname,
+          },
+        };
+
+        console.log("The data to send ", dataToSend);
+
+        res.status(200).json({
+          success: true,
+          data: dataToSend,
+          message: "login successful",
+        });
       }
     );
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
