@@ -45,61 +45,62 @@ const UserSchema = new Schema({
     resume: { type: String },
     skills: [String],
     interests: [String],
-    experience: String,
     role: {
       type: String,
       enum: ["student", "mentor", "admin"],
       default: "student",
     },
     placed: { type: Boolean, default: false },
-    verified: { type: Boolean, default: false },
-    social_links: {
-      youtube: {
-        type: String,
-        default: "",
-      },
-      instagram: {
-        type: String,
-        default: "",
-      },
-      facebook: {
-        type: String,
-        default: "",
-      },
-      twitter: {
-        type: String,
-        default: "",
-      },
-      github: {
-        type: String,
-        default: "",
-      },
-      website: {
-        type: String,
-        default: "",
-      },
-    },
-    profilePicture: {
-      type: String,
-      default: () => {
-        return `https://api.dicebear.com/6.x/${
-          profile_imgs_collections_list[
-            Math.floor(Math.random() * profile_imgs_collections_list.length)
-          ]
-        }/svg?seed=${
-          profile_imgs_name_list[
-            Math.floor(Math.random() * profile_imgs_name_list.length)
-          ]
-        }`;
-      },
-    },
-    posts: [
-      {
-        text: { type: String },
-        imageUrl: { type: String },
-      },
-    ],
   },
+  experience: String,
+  verified: { type: Boolean, default: false },
+  social_links: {
+    youtube: {
+      type: String,
+      default: "",
+    },
+    instagram: {
+      type: String,
+      default: "",
+    },
+    facebook: {
+      type: String,
+      default: "",
+    },
+    twitter: {
+      type: String,
+      default: "",
+    },
+    github: {
+      type: String,
+      default: "",
+    },
+    website: {
+      type: String,
+      default: "",
+    },
+  },
+  profilePicture: {
+    type: String,
+    default: () => {
+      return `https://api.dicebear.com/6.x/${
+        profile_imgs_collections_list[
+          Math.floor(Math.random() * profile_imgs_collections_list.length)
+        ]
+      }/svg?seed=${
+        profile_imgs_name_list[
+          Math.floor(Math.random() * profile_imgs_name_list.length)
+        ]
+      }`;
+    },
+  },
+  posts: [
+    {
+      text: { type: String },
+      imageUrl: { type: String },
+    },
+  ],
+
   completedProfile: { type: Boolean, default: false },
 });
 

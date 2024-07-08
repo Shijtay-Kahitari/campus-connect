@@ -28,7 +28,6 @@ router.post("/register", async (req, res) => {
 
     // Generate a username based on email (assuming this function exists)
     const username = await genereteUsername(email);
-    console.log(fname, lname, username, email, password);
 
     // Create a new user object and save it to the database
     const user = new User({
@@ -45,10 +44,12 @@ router.post("/register", async (req, res) => {
     const payload = {
       user: {
         id: user.id,
-        role: user.role,
-        email: user.email,
+        role: user.profile.role,
+        email: user.profile.email,
       },
     };
+
+    console.log("the payload is " , payload);
 
     jwt.sign(
       payload,
@@ -62,11 +63,11 @@ router.post("/register", async (req, res) => {
           token,
           user: {
             id: user.id,
-            role: user.role,
+            role: user.profile.role,
           },
         };
 
-        res.status(200).json({ success: true, dataToSend });
+        res.status(200).json({ success: true, data: dataToSend });
       }
     );
   } catch (error) {

@@ -4,9 +4,12 @@ import Loader from '../components/Loader';
 import Alert from '../components/Alert';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { createAccount } from '../Redux/Slices/AuthSlice';
 
 const Auth = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fname: '',
@@ -14,7 +17,6 @@ const Auth = () => {
     email: '',
     password: '',
     repeatPassword: '',
-    termsAccepted: false,
   });
 
   const handleChange = (e) => {
@@ -24,7 +26,8 @@ const Auth = () => {
       [id]: value,
     }));
   }
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Check if passwords match before submitting
@@ -32,47 +35,26 @@ const Auth = () => {
       toast.error('password thik se dal, andha hai kya ')
       return;
     }
-    setLoading(true)
 
-    const data = JSON.stringify({
+    const data = {
       fname: formData.fname,
       lname: formData.lname,
       email: formData.email,
       password: formData.password,
-    });
+    };
 
     console.log(data);
 
-    const config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'http://localhost:5000/api/auth/register',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      data: data,
-    };
+    const response = await dispatch(createAccount(data))
+    console.log("the res  is ", response);
+    return navigate('/')
 
-    axios.request(config)
-      .then((response) => {
-        setLoading(false)
-        navigate('/')
-        console.log(JSON.stringify(response.data));
 
-      })
-      .catch((error) => {
-        toast.error(error?.response?.data?.message)
-
-        setLoading(false)
-        console.log(error);
-      });
   };
-
   return (
     <>
 
-      {loading ? <Loader message={"ruk bhai, sign up ho rha hai"} /> :
+    
         <form className="max-w-sm mx-auto pt-24" onSubmit={handleSubmit}>
           <div className="md:flex gap-2 mx-auto">
             <div className="mb-5">
@@ -152,7 +134,7 @@ const Auth = () => {
             Sign up
           </button>
         </form>
-      }</>
+      </>
   );
 };
 
