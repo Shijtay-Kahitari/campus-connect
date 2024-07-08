@@ -65,8 +65,8 @@ router.post("/register", async (req, res) => {
             id: user.id,
             role: user.profile.role,
             profilePicture: user.profilePicture,
-            name :user.profile.fname
-
+            name: user.profile.fname,
+            username: user.profile.username,
           },
         };
 
@@ -129,6 +129,7 @@ router.post("/login", async (req, res) => {
             role: user.profile.role,
             profilePicture: user.profilePicture,
             name: user.profile.fname,
+            username: user.profile.username,
           },
         };
 
@@ -146,5 +147,7 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
+
+
 
 export default router;

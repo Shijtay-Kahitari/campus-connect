@@ -3,7 +3,6 @@ import { toast } from "react-toastify";
 import axiosinstance from "../../helpers/axiosInstance";
 const storeUserInString = localStorage.getItem("user");
 
-console.log("varad", storeUserInString);
 const storedUser =
   storeUserInString == "undefined" || !storeUserInString
     ? {}

@@ -24,6 +24,7 @@ const Nav = () => {
         localStorage.removeItem('user');
         navigate('/auth')
     }
+    console.log(import.meta.env.VITE_SERVER_DOMAIN+user?.user?.profilePicture);
 
     return (
 
@@ -42,7 +43,7 @@ const Nav = () => {
                              <div className="mb-2 flex flex-col gap-3 items-center justify-center">
 
                                         <img
-                                            className="h-10 w-10 rounded-full"
+                                            className="h-10 w-10 rounded-full object-contain"
                                             src={user?.user?.profilePicture}
                                             alt="Jese Leos"
                                         />
@@ -51,7 +52,7 @@ const Nav = () => {
                                             {user?.user?.name}
                                         </p>
                                         <div className='flex gap-3 justify-center'>
-                                            <button
+                                            <button onClick={()=>navigate(`/profile/${user?.user?.username}`)}
                                                 type="button"
                                                 className="rounded-lg bg-blue-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mx-auto "
                                             >
@@ -66,7 +67,7 @@ const Nav = () => {
                                             </button>
                                         </div>
 
-                                    </div> : ""
+                                    </div> 
                                 
 
 
@@ -75,7 +76,7 @@ const Nav = () => {
                             </div>
                         }
                     >
-                        <button type='button' className='rounded-lg bg-blue-700 px-3 py-2 text-md font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mx-auto'>Profile</button>
+                        <button  type='button' className='rounded-lg bg-blue-700 px-3 py-2 text-md font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mx-auto'>Profile</button>
                     </Popover>
                     <button data-collapse-toggle="navbar-sticky" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-sticky" aria-expanded="false">
                         <span class="sr-only">Open main menu</span>
