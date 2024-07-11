@@ -1,0 +1,101 @@
+student->
+sign -> full name , email , password
+login -> email , pass
+
+student profile ->
+photo
+desc
+resume 
+tech stack 
+marks ,
+department,
+class,
+year,
+student id 
+isPlaced,
+experience,
+
+
+
+
+
+
+
+
+
+college / TPO --> job ->
+1-> logo
+2-> company name 
+3-> job position 
+4-> job description & requirements  (text editor)
+5-> mode of work ->(remote , hybrid , on site )
+6-> company description 
+
+
+
+company --> 
+
+
+optional 
+
+(study abroad)
+
+
+student profile
+profile-picture 
+fname 
+lname 
+student id
+email
+class 
+department 
+passing year 
+DOB
+phone number 
+social_links 
+College Name (field should be lock)
+
+
+resume field 
+fname 
+lname 
+email
+phone number
+location
+social_links - linkedin, github, portfolio
+educational background -> 10/12 passing year , 10/12 percentage , 10/12 college name 
+avg cgpa
+skills -> dropdown of all the skills 
+projects -> title, short description , live-link , year
+experience -> title , company name , duration , short description 
+achievements -> title , year, short des one line 
+
+
+TPO ->
+email,
+profile-picture
+username, 
+password
+
+
+TPO can register the company and TPO will give the credentials to that company -> (logo , company name ,website link, address , email , pass,  )
+
+TPO can add the job post -> all the company data will fetch from company name and then -> job title , job des , requirements , skills, mode of work, salary (drop down), application deadline , drive date,  
+
+
+
+
+
+
+admin
+skills -> 
+personalise ->
+resorce link and tags ->  
+
+
+
+
+
+
+
+
