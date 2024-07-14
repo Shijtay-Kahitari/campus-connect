@@ -164,14 +164,14 @@ const ProfilePage = () => {
             <Nav />
             <div className='mt-16 '>
                 {loading ? (
-                    <div className="flex justify-center items-center min-h-screen">
+                    <div className="flex justify-center  items-center min-h-screen">
                         <h1 className="text-4xl text-black dark:text-white">Loading</h1>
                     </div>
                 ) : (
                     <div className='p-4 md:w-[80%] mx-auto '>
                         <h1 className='dark:text-white heading'>Update Profile</h1>
 
-                        <div className=' mx-auto flex p-4 '>
+                        <div className=' mx-auto flex p-4 max-md:flex-col '>
                             <div className='p-4 w-full flex flex-col gap-3'>
                                 <div className="flex gap-4 items-center relative justify-center w-100 mx-auto w-fit">
                                     <Label
@@ -188,7 +188,7 @@ const ProfilePage = () => {
                                         <i className="fa-solid fa-cloud-arrow-up"></i>
                                     </Label>
                                 </div>
-                                <div className='flex gap-3 mx-auto w-full justify-center'>
+                                <div className='flex gap-3 mx-auto w-full justify-center '>
                                     <TextInput value={formData.firstName} className='w-full' id="firstName" name="firstName" type="text" placeholder="First Name" required onChange={handleInputChange} />
                                     <TextInput value={formData.lastName} className='w-full' id="lastName" name="lastName" type="text" placeholder="Last Name" required onChange={handleInputChange} />
                                 </div>
@@ -208,15 +208,15 @@ const ProfilePage = () => {
                                     </div>
                                     <div className='w-full flex flex-col gap-3'>
                                         <p className='text-sm dark:text-white p-1'>Add your social links</p>
-                                        <div className='flex gap-3 mx-auto w-full justify-center'>
+                                        <div className='flex gap-3 mx-auto w-full justify-center max-md:flex-col'>
                                             <TextInput value={formData.github} className='w-full' id="github" name="github" type="text" placeholder="GitHub" onChange={handleInputChange} />
                                             <TextInput value={formData.website} className='w-full' id="website" name="website" type="text" placeholder="Portfolio Website" onChange={handleInputChange} />
                                         </div>
-                                        <div className='flex gap-3 mx-auto w-full justify-center'>
+                                        <div className='flex gap-3 mx-auto w-full justify-center max-md:flex-col'>
                                             <TextInput value={formData.instagram} className='w-full' id="instagram" name="instagram" type="text" placeholder="Instagram" onChange={handleInputChange} />
                                             <TextInput value={formData.facebook} className='w-full' id="facebook" name="facebook" type="text" placeholder="Facebook" onChange={handleInputChange} />
                                         </div>
-                                        <div className='flex gap-3 mx-auto w-full justify-center'>
+                                        <div className='flex gap-3 mx-auto w-full justify-center max-md:flex-col'>
                                             <TextInput value={formData.twitter} className='w-full' id="twitter" name="twitter" type="text" placeholder="Twitter" onChange={handleInputChange} />
                                             <TextInput value={formData.youtube} className='w-full' id="youtube" name="youtube" type="text" placeholder="YouTube" onChange={handleInputChange} />
                                         </div>
