@@ -6,9 +6,8 @@ export const genereteUsername = async (email) => {
 
   try {
     const usernameNotUnique = await User.findOne({
-      "profile.username": username,
+      username,
     });
-
 
     if (usernameNotUnique) {
       username += nanoid().substring(0, 5);

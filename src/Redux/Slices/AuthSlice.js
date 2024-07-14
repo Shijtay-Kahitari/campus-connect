@@ -92,23 +92,31 @@ export const logout = createAsyncThunk("/auth/logout", async () => {
   }
 });
 
-export const updateprofile = createAsyncThunk("/user/update", async (data) => {
-  try {
-    const res = axiosinstance.put(`/user/update/${data.id}`, data.data);
+export const updateprofile = createAsyncThunk(
+  "/profile/update-profile",
+  async (data) => {
+    console.log("varad");
+    console.log("varad", data);
+    try {
+      const res = await axiosinstance.post(
+        `/profile/update-profile/${data.userId}`,
+        data.formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-    toast.promise(res, {
-      loading: "wait!, profile update in progress...",
-      success: "Profile Updated Successfully",
-      error: "Faild to update profile",
-    });
-
-    return (await res).data;
-  } catch (error) {
-    toast.error(error.response?.data?.message);
+      console.log(res.data);
+      return (await res).data;
+    } catch (error) {
+      toast.error(error.response?.data?.message);
+    }
   }
-});
+);
 
-export const getUserData = createAsyncThunk("/user/details", async (id) => {
+export const updateState = createAsyncThunk("/user/details", async (id) => {
   console.log(id);
   try {
     const res = axiosinstance.get(`/user/me/${id}`);
@@ -133,11 +141,23 @@ const authSlice = createSlice({
       state.user = action?.payload?.data;
     });
     builder.addCase(login.fulfilled, (state, action) => {
-      
       localStorage.setItem("user", JSON.stringify(action?.payload?.data));
       localStorage.setItem("isLoggedIn", true);
       state.isLoggedIn = true;
       state.user = action?.payload?.data;
+    });
+    builder.addCase(updateprofile.fulfilled, (state, action) => {
+      console.log(action);
+      if (action?.payload?.success === true) {
+        const userInsession = localStorage.getItem("user");
+        const user = JSON.parse(userInsession);
+        user.user = action?.payload?.data;
+
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("isLoggedIn", true);
+        state.isLoggedIn = true;
+        state.user.user = action?.payload?.data;
+      }
     });
     // builder.addCase(logout.fulfilled, (state) => {
     //   localStorage.clear();

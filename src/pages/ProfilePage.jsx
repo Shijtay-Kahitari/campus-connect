@@ -1,21 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { FileInput, Label } from 'flowbite-react';
-import axiosinstance from '../helpers/axiosInstance'
-import { useParams } from 'react-router-dom';
+import { FileInput, Textarea } from 'flowbite-react';
+import axiosinstance from '../helpers/axiosInstance';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Loader from '../components/Loader'
+import Loader from '../components/Loader';
+import Nav from '../components/Nav';
+import { Button, Checkbox, Label, TextInput } from "flowbite-react";
+import { updateprofile } from '../Redux/Slices/AuthSlice';
+import { useDispatch } from 'react-redux';
 
 const ProfilePage = () => {
     const [selectedImage, setSelectedImage] = useState(null);
-    const [flag, setFlag] = useState(null);
-    const [imageFile, setImageFile] = useState(false);
-    const [loading, setLoading] = useState(false)
+    const [imageFile, setImageFile] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch()
 
-    const [userProfile, setUserProfile] = useState({})
+    const [updated, setupdated] = useState(false);
     const { userId } = useParams();
+    const navigate = useNavigate()
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        username: '',
+        email: '',
+        bio: '',
+        github: '',
+        website: '',
+        instagram: '',
+        facebook: '',
+        twitter: '',
+        youtube: '',
+    });
+
     useEffect(() => {
-        getProfile()
-    }, [userId])
+        getProfile();
+    }, [userId, updated]);
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -29,17 +48,13 @@ const ProfilePage = () => {
         }
     };
 
-
-
-
-
     const handleUpload = async () => {
         if (!imageFile) {
             toast.error('No image selected!');
             return;
         }
 
-        const loading = toast.loading('wait uploading')
+        const loading = toast.loading('wait uploading');
 
         const formData = new FormData();
         formData.append('avatar', imageFile);
@@ -56,12 +71,11 @@ const ProfilePage = () => {
             let user = null;
             if (userInSession) {
                 user = JSON.parse(userInSession);
-                user.user.profilePicture =  response.data.data;
-                localStorage.setItem("user", JSON.stringify(user)); // Make sure to set "user" with JSON.stringify
+                user.user.profilePicture = response.data.data;
+                localStorage.setItem("user", JSON.stringify(user));
             }
 
-
-            toast.dismiss(loading)
+            toast.dismiss(loading);
             toast.success('Image uploaded successfully!');
             console.log(response.data);
         } catch (error) {
@@ -72,60 +86,147 @@ const ProfilePage = () => {
 
     const getProfile = async () => {
         try {
-            setLoading(true)
-            const userData = await axiosinstance.post('/profile/get-profile', { username: userId });
-
-            // Retrieve user from localStorage and update profilePicture if user exists
-
-            // Assuming setUserProfile is a function to update state or handle profile data
-            setUserProfile(userData.data);
-            setLoading(false)
-            return toast.success('profile fetch successfully')
+            setLoading(true);
+            const { data } = await axiosinstance.post('/profile/get-profile', { username: userId });
 
 
+
+            setFormData({
+                profilePicture: data.profilePicture,
+                firstName: data.fname,
+                lastName: data.lname,
+                username: data.username,
+                email: data.email,
+                bio: data.bio,
+                github: data.social_links.github,
+                website: data.social_links.website,
+                instagram: data.social_links.instagram,
+                facebook: data.social_links.facebook,
+                twitter: data.social_links.twitter,
+                youtube: data.social_links.website,
+            })
+
+            setLoading(false);
+            return toast.success('Profile fetched successfully');
         } catch (error) {
             console.error("Error fetching profile:", error);
         }
     };
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
+    const handleUpdate = async () => {
+        try {
+            setLoading(true);
+
+            const formDataToSend = new FormData();
+
+            for (const key in formData) {
+                if (formData.hasOwnProperty(key)) {
+                    formDataToSend.append(key, formData[key]);
+                }
+            }
+
+            if (imageFile) {
+                formDataToSend.append('avatar', imageFile);
+            }
+
+            for (let [key, value] of formDataToSend.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+            console.log("jii vara");
+            // const response = await dispatch(createAccount(data)).unwrap();
+
+            const res = await dispatch(updateprofile({ userId, formDataToSend }))
+            console.log(res);
+
+            setupdated(res.payload.data.success);
+            setLoading(false);
+            toast.success('Profile updated successfully!');
+            return navigate('/')
+        } catch (error) {
+            console.error("Error updating profile: ", error);
+            setLoading(false);
+
+        }
+    };
 
     return (
-        <>
-            {
-                loading ? <div className="flex justify-center items-center h-screen">
-
-                    <h1
-                        className="text-4xl text-black dark:text-white"
-
-                    >Loading</h1>
-                </div> :
-
-
-                    <div className='flex p-4 w-full '>
-                        <div className='p-4 w-full '>
-                            <div className="flex items-center justify-center">
-                                <Label
-                                    htmlFor="dropzone-file"
-                                    className="flex h-64 w-64 cursor-pointer flex-col items-center justify-center rounded-full border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-                                >
-
-                                    <img src={selectedImage ? selectedImage : userProfile ? `${import.meta.env.VITE_SERVER_DOMAIN}${userProfile.profilePicture}` : ''} alt="Selected" className="h-full w-full rounded-full object-cover" />
-
-                                    <FileInput id="dropzone-file" className="hidden" onChange={handleImageChange} />
-                                </Label>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={handleUpload}
-                                className="rounded-lg w-full mt-4 bg-blue-700 px-4 py-3 text-xs font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mx-auto"
-                            >
-                                Upload
-                            </button>
-                        </div>
-                        <div className='p-4 w-full'></div>
+        <div>
+            <Nav />
+            <div className='mt-16 '>
+                {loading ? (
+                    <div className="flex justify-center items-center min-h-screen">
+                        <h1 className="text-4xl text-black dark:text-white">Loading</h1>
                     </div>
-            }
-        </>
+                ) : (
+                    <div className='p-4 md:w-[80%] mx-auto '>
+                        <h1 className='dark:text-white heading'>Update Profile</h1>
+
+                        <div className=' mx-auto flex p-4 '>
+                            <div className='p-4 w-full flex flex-col gap-3'>
+                                <div className="flex gap-4 items-center relative justify-center w-100 mx-auto w-fit">
+                                    <Label
+                                        className="flex h-56 w-56 cursor-pointer flex-col items-center justify-center rounded-full border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                                    >
+                                        <img src={selectedImage ? selectedImage : formData.profilePicture ? `${import.meta.env.VITE_SERVER_DOMAIN}${formData.profilePicture}` : ''} alt="Selected" className="h-full w-full rounded-full object-cover" />
+                                    </Label>
+                                    <FileInput onChange={handleImageChange} id="dropzone-file" className="hidden" />
+                                    <Label
+                                        type="button"
+                                        htmlFor="dropzone-file"
+                                        className='dark:bg-slate-800 dark:text-white btn absolute right-4 bottom-3 cursor-pointer'
+                                    >
+                                        <i className="fa-solid fa-cloud-arrow-up"></i>
+                                    </Label>
+                                </div>
+                                <div className='flex gap-3 mx-auto w-full justify-center'>
+                                    <TextInput value={formData.firstName} className='w-full' id="firstName" name="firstName" type="text" placeholder="First Name" required onChange={handleInputChange} />
+                                    <TextInput value={formData.lastName} className='w-full' id="lastName" name="lastName" type="text" placeholder="Last Name" required onChange={handleInputChange} />
+                                </div>
+                                <div className='flex flex-col mx-auto w-full justify-center'>
+                                    <TextInput value={formData.username} className='w-full' id="username" name="username" type="text" placeholder="Username" required onChange={handleInputChange} />
+                                    <p className='text-sm dark:text-white p-1'>Username will be used to search the user and will be visible to all users</p>
+                                </div>
+                                <div className='flex flex-col mx-auto w-full justify-center'>
+                                    <TextInput disabled value={formData.email} className='w-full' id="email" name="email" type="text" placeholder="Email" required onChange={handleInputChange} />
+                                </div>
+                            </div>
+                            <div className='p-4 w-full md:mt-[1.3rem]'>
+                                <div className='w-full flex flex-col gap-4 items-center'>
+                                    <div className='flex flex-col mx-auto w-full justify-center'>
+                                        <Textarea value={formData.bio} className='w-full h-32' id="bio" name="bio" type="text" placeholder="Bio" onChange={handleInputChange} />
+                                        <p className='text-sm dark:text-white p-1'>800 characters left</p>
+                                    </div>
+                                    <div className='w-full flex flex-col gap-3'>
+                                        <p className='text-sm dark:text-white p-1'>Add your social links</p>
+                                        <div className='flex gap-3 mx-auto w-full justify-center'>
+                                            <TextInput value={formData.github} className='w-full' id="github" name="github" type="text" placeholder="GitHub" onChange={handleInputChange} />
+                                            <TextInput value={formData.website} className='w-full' id="website" name="website" type="text" placeholder="Portfolio Website" onChange={handleInputChange} />
+                                        </div>
+                                        <div className='flex gap-3 mx-auto w-full justify-center'>
+                                            <TextInput value={formData.instagram} className='w-full' id="instagram" name="instagram" type="text" placeholder="Instagram" onChange={handleInputChange} />
+                                            <TextInput value={formData.facebook} className='w-full' id="facebook" name="facebook" type="text" placeholder="Facebook" onChange={handleInputChange} />
+                                        </div>
+                                        <div className='flex gap-3 mx-auto w-full justify-center'>
+                                            <TextInput value={formData.twitter} className='w-full' id="twitter" name="twitter" type="text" placeholder="Twitter" onChange={handleInputChange} />
+                                            <TextInput value={formData.youtube} className='w-full' id="youtube" name="youtube" type="text" placeholder="YouTube" onChange={handleInputChange} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <Button className='w-80 mx-auto' onClick={handleUpdate}>Update</Button>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };
 

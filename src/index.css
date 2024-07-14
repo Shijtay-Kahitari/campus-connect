@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.btn{
+    background-color: #1A56DB;
+    padding: 8px 11px;
+    color: white;
+    border-radius: 10px;
+}
+.heading {
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: bold;
+    width: fit-content;
+    font-size: 1.25rem; /* equivalent to text-xl in Tailwind */
+    padding: 1rem;
+  }
+  

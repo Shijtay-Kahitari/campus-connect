@@ -30,78 +30,86 @@ let profile_imgs_collections_list = [
 
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema({
-  profile: {
+const UserSchema = new Schema(
+  {
     fname: { type: String, required: true },
     lname: { type: String, required: true },
-    username: { type: String, required: true },
+    student_id: { type: String },
+    username: { type: String, required: true , unique:true},
     email: { type: String, required: true },
-    password: { type: String, required: true },
+    academic_year: { type: String },
+    passing_year: { type: String },
+    dob: { type: Date },
+    phone_number: { type: Date },
+    department: { type: String },
+    college_name: { type: String },
+    password: { type: String },
     bio: {
       type: String,
       maxlength: [200, "Bio should not be more than 200"],
       default: "",
     },
-    resume: { type: String },
-    skills: [String],
-    interests: [String],
     role: {
       type: String,
       enum: ["student", "mentor", "admin"],
       default: "student",
     },
-    placed: { type: Boolean, default: false },
-  },
-  experience: String,
-  verified: { type: Boolean, default: false },
-  social_links: {
-    youtube: {
+    resume: {
+      type: [Schema.Types.ObjectId],
+      ref: "resume",
+    },
+    social_links: {
+      youtube: {
+        type: String,
+        default: "",
+      },
+      instagram: {
+        type: String,
+        default: "",
+      },
+      facebook: {
+        type: String,
+        default: "",
+      },
+      twitter: {
+        type: String,
+        default: "",
+      },
+      github: {
+        type: String,
+        default: "",
+      },
+      website: {
+        type: String,
+        default: "",
+      },
+    },
+    profilePicture: {
       type: String,
-      default: "",
+      default: () => {
+        return `https://api.dicebear.com/6.x/${
+          profile_imgs_collections_list[
+            Math.floor(Math.random() * profile_imgs_collections_list.length)
+          ]
+        }/svg?seed=${
+          profile_imgs_name_list[
+            Math.floor(Math.random() * profile_imgs_name_list.length)
+          ]
+        }`;
+      },
     },
-    instagram: {
-      type: String,
-      default: "",
+    posts: {
+      type: [Schema.Types.ObjectId],
+      ref: "post",
     },
-    facebook: {
-      type: String,
-      default: "",
-    },
-    twitter: {
-      type: String,
-      default: "",
-    },
-    github: {
-      type: String,
-      default: "",
-    },
-    website: {
-      type: String,
-      default: "",
-    },
-  },
-  profilePicture: {
-    type: String,
-    default: () => {
-      return `https://api.dicebear.com/6.x/${
-        profile_imgs_collections_list[
-          Math.floor(Math.random() * profile_imgs_collections_list.length)
-        ]
-      }/svg?seed=${
-        profile_imgs_name_list[
-          Math.floor(Math.random() * profile_imgs_name_list.length)
-        ]
-      }`;
-    },
-  },
-  posts: [
-    {
-      text: { type: String },
-      imageUrl: { type: String },
-    },
-  ],
 
-  completedProfile: { type: Boolean, default: false },
-});
+    completedProfile: { type: Boolean, default: false },
+  },
+  {
+    timestamps: {
+      createdAt: "publishedAt",
+    },
+  }
+);
 
 export default mongoose.model("User", UserSchema);

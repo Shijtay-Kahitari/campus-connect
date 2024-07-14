@@ -17,7 +17,7 @@ router.post("/register", async (req, res) => {
 
   try {
     // Check if user with the same email already exists
-    let userExist = await User.findOne({ "profile.email": email });
+    let userExist = await User.findOne({ email: email });
 
     if (userExist) {
       // User already exists, return a 400 Bad Request status
@@ -31,12 +31,16 @@ router.post("/register", async (req, res) => {
 
     // Create a new user object and save it to the database
     const user = new User({
-      profile: { username, fname, lname, email, password },
+      username,
+      fname,
+      lname,
+      email,
+      password,
     });
 
     // Hash the password before saving it
     const salt = await bcrypt.genSalt(10);
-    user.profile.password = await bcrypt.hash(password, salt);
+    user.password = await bcrypt.hash(password, salt);
 
     await user.save();
 
@@ -44,12 +48,12 @@ router.post("/register", async (req, res) => {
     const payload = {
       user: {
         id: user.id,
-        role: user.profile.role,
-        email: user.profile.email,
+        role: user.role,
+        email: user.email,
       },
     };
 
-    console.log("the payload is ", payload);
+
 
     jwt.sign(
       payload,
@@ -63,10 +67,10 @@ router.post("/register", async (req, res) => {
           token,
           user: {
             id: user.id,
-            role: user.profile.role,
+            role: user.role,
             profilePicture: user.profilePicture,
-            name: user.profile.fname,
-            username: user.profile.username,
+            name: user.fname,
+            username: user.username,
           },
         };
 
@@ -91,14 +95,14 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    let user = await User.findOne({ "profile.email": email });
-    console.log(user);
+    let user = await User.findOne({ email: email });
+
 
     if (!user) {
       return res.status(400).json({ success: false, error: "User not exist" });
     }
 
-    const isMatch = await bcrypt.compare(password, user?.profile?.password);
+    const isMatch = await bcrypt.compare(password, user?.password);
 
     if (!isMatch) {
       return res.status(400).json({ success: false, error: "wrong password" });
@@ -107,12 +111,11 @@ router.post("/login", async (req, res) => {
     const payload = {
       user: {
         id: user.id,
-        role: user.profile.role,
-        email: user.profile.email,
+        role: user.role,
+        email: user.email,
       },
     };
 
-    console.log("the payload is ", payload);
 
     jwt.sign(
       payload,
@@ -126,14 +129,14 @@ router.post("/login", async (req, res) => {
           token,
           user: {
             id: user.id,
-            role: user.profile.role,
+            role: user.role,
             profilePicture: user.profilePicture,
-            name: user.profile.fname,
-            username: user.profile.username,
+            name: user.fname,
+            username: user.username,
           },
         };
 
-        console.log("The data to send ", dataToSend);
+    
 
         res.status(200).json({
           success: true,
@@ -147,7 +150,5 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
-
-
 
 export default router;
