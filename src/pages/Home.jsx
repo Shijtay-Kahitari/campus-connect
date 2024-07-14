@@ -16,6 +16,7 @@ const Home = () => {
     return (
         <section>
             <Nav />
+            <h1 className='text-[15rem] dark:text-white from-bold w-fit mx-auto mt-20'>काम करा रे </h1>
 
         </section>
     )
