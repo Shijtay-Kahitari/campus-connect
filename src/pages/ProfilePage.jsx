@@ -32,6 +32,8 @@ const ProfilePage = () => {
         youtube: '',
     });
 
+
+
     useEffect(() => {
         getProfile();
     }, [userId, updated]);
@@ -202,7 +204,7 @@ const ProfilePage = () => {
                                 <div className='w-full flex flex-col gap-4 items-center'>
                                     <div className='flex flex-col mx-auto w-full justify-center'>
                                         <Textarea value={formData.bio} className='w-full h-32' id="bio" name="bio" type="text" placeholder="Bio" onChange={handleInputChange} />
-                                        <p className='text-sm dark:text-white p-1'>800 characters left</p>
+                                        <p className='text-sm dark:text-white p-1'><span className={formData.bio.length > 800 ? 'text-red-500 ' : " text-green-300 " + '  text-sm'}>{800 - formData.bio.length > 0 ? 800 - formData.bio.length : 0}</span>/800 character left</p>
                                     </div>
                                     <div className='w-full flex flex-col gap-3'>
                                         <p className='text-sm dark:text-white p-1'>Add your social links</p>
