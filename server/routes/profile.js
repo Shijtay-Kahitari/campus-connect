@@ -40,6 +40,9 @@ router.post(
       youtube,
     } = req.body;
 
+    const userformsession = req.user;
+   
+
     const usernameParams = req.params.username;
     console.log(usernameParams);
     // console.log(req.body);
@@ -50,6 +53,10 @@ router.post(
         return res
           .status(404)
           .json({ success: false, message: "User not found" });
+      }
+
+      if(userformsession.email != user.email){
+        return res.status(403).json({ success: false, message: "you dont ahev access to update someone else account" });
       }
 
       user.fname = firstName;
