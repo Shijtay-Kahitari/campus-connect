@@ -13,8 +13,10 @@ export const genereteUsername = async (email) => {
       username += nanoid().substring(0, 5);
       console.log(`Updated username: ${username}`);
     }
+    let sanitizedUsername = username.toLowerCase();
+    sanitizedUsername = sanitizedUsername.replace(/\s+/g, '');
 
-    return username;
+    return sanitizedUsername;
   } catch (error) {
     console.error("Error checking username uniqueness:", error);
     throw new Error("Error generating username");

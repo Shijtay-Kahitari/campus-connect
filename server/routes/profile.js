@@ -56,12 +56,15 @@ router.post(
       }
 
       if(userformsession.email != user.email){
-        return res.status(403).json({ success: false, message: "you dont ahev access to update someone else account" });
+        return res.status(403).json({ success: false, message: "you dont have access to update someone else account" });
       }
+
+      let sanitizedUsername = username.toLowerCase();
+      sanitizedUsername = sanitizedUsername.replace(/\s+/g, '');
 
       user.fname = firstName;
       user.lname = lastName;
-      user.username = username;
+      user.username = sanitizedUsername;
       user.email = email;
       user.bio = bio;
       user.social_links.github = github;
