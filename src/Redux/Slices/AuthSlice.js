@@ -96,7 +96,7 @@ export const updateprofile = createAsyncThunk(
   "/profile/update-profile",
   async (data) => {
     console.log("varad");
-    console.log("varad", data);
+    console.log("varad", data.token);
     try {
       const res = await axiosinstance.post(
         `/profile/update-profile/${data.userId}`,
@@ -104,6 +104,7 @@ export const updateprofile = createAsyncThunk(
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `${data.token}`,
           },
         }
       );

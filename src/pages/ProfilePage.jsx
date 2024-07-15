@@ -7,14 +7,14 @@ import Loader from '../components/Loader';
 import Nav from '../components/Nav';
 import { Button, Checkbox, Label, TextInput } from "flowbite-react";
 import { updateprofile } from '../Redux/Slices/AuthSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ProfilePage = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch()
-
+    const { user } = useSelector((state) => state.auth);
     const [updated, setupdated] = useState(false);
     const { userId } = useParams();
     const navigate = useNavigate()
@@ -165,7 +165,7 @@ const ProfilePage = () => {
             console.log("jii vara");
             // const response = await dispatch(createAccount(data)).unwrap();
 
-            const res = await dispatch(updateprofile({ userId, formDataToSend }))
+            const res = await dispatch(updateprofile({ userId, formDataToSend , token:user.token }))
             console.log(res);
 
             setupdated(res.payload.data.success);
