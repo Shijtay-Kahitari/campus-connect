@@ -23,7 +23,7 @@ const router = express.Router();
 // @desc    Update user profile
 // @access  Private
 router.post(
-  "/update-profile/:username",
+  "/update-profile/:username", verifyToken,
   upload.single("avatar"),
   async (req, res) => {
     const {
