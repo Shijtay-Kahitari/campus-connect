@@ -124,11 +124,31 @@ const ProfilePage = () => {
     };
 
     const handleUpdate = async () => {
+        
+        const{firstName, lastName, username} = formData;
+
+        
+
+        if(firstName.trim()==''){
+            toast.error("First name is required");
+            return;
+        }
+        if(lastName.trim()==''){
+            toast.error("Last name is required");
+            return;
+        }
+        if(username.trim()==''){
+            toast.error("User name is required");
+            return;
+        }
+
+
+        
         try {
             setLoading(true);
 
             const formDataToSend = new FormData();
-
+            
             for (const key in formData) {
                 if (formData.hasOwnProperty(key)) {
                     formDataToSend.append(key, formData[key]);
