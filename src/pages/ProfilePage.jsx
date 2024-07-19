@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { FileInput, Textarea } from 'flowbite-react';
+import { FileInput, Textarea, Button, Label, TextInput } from 'flowbite-react';
 import axiosinstance from '../helpers/axiosInstance';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import Nav from '../components/Nav';
-import { Button, Checkbox, Label, TextInput } from "flowbite-react";
-import { updateprofile } from '../Redux/Slices/AuthSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { updateprofile } from '../Redux/Slices/AuthSlice';
 
 const ProfilePage = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [loading, setLoading] = useState(false);
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
     const [updated, setupdated] = useState(false);
     const { userId } = useParams();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -30,9 +29,13 @@ const ProfilePage = () => {
         facebook: '',
         twitter: '',
         youtube: '',
+        student_id: '',
+        dob: '',
+        academic_year: 'FE', // Default value
+        phone_number: '',
+        department: 'Computer', // Default value
+        college_name: '',
     });
-
-
 
     useEffect(() => {
         getProfile();
@@ -56,7 +59,7 @@ const ProfilePage = () => {
             return;
         }
 
-        const loading = toast.loading('wait uploading');
+        const loadingToast = toast.loading('Uploading image...');
 
         const formData = new FormData();
         formData.append('avatar', imageFile);
@@ -70,18 +73,17 @@ const ProfilePage = () => {
             });
 
             const userInSession = localStorage.getItem("user");
-            let user = null;
             if (userInSession) {
-                user = JSON.parse(userInSession);
+                const user = JSON.parse(userInSession);
                 user.user.profilePicture = response.data.data;
                 localStorage.setItem("user", JSON.stringify(user));
             }
 
-            toast.dismiss(loading);
+            toast.dismiss(loadingToast);
             toast.success('Image uploaded successfully!');
-            console.log(response.data);
         } catch (error) {
             console.error('Error uploading image:', error);
+            toast.dismiss(loadingToast);
             toast.error('Failed to upload image.');
         }
     };
@@ -90,8 +92,6 @@ const ProfilePage = () => {
         try {
             setLoading(true);
             const { data } = await axiosinstance.post('/profile/get-profile', { username: userId });
-
-
 
             setFormData({
                 profilePicture: data.profilePicture,
@@ -105,13 +105,20 @@ const ProfilePage = () => {
                 instagram: data.social_links.instagram,
                 facebook: data.social_links.facebook,
                 twitter: data.social_links.twitter,
-                youtube: data.social_links.website,
-            })
+                youtube: data.social_links.youtube,
+                student_id: data.student_id || '',
+                dob: data.dob || '',
+                academic_year: data.academic_year || 'FE',
+                phone_number: data.phone_number || '',
+                department: data.department || 'Computer',
+                college_name: data.college_name || '',
+            });
 
             setLoading(false);
-            return toast.success('Profile fetched successfully');
+            toast.success('Profile fetched successfully');
         } catch (error) {
             console.error("Error fetching profile:", error);
+            setLoading(false);
         }
     };
 
@@ -124,31 +131,25 @@ const ProfilePage = () => {
     };
 
     const handleUpdate = async () => {
-        
-        const{firstName, lastName, username} = formData;
+        const { firstName, lastName, username } = formData;
 
-        
-
-        if(firstName.trim()==''){
+        if (firstName.trim() === '') {
             toast.error("First name is required");
             return;
         }
-        if(lastName.trim()==''){
+        if (lastName.trim() === '') {
             toast.error("Last name is required");
             return;
         }
-        if(username.trim()==''){
-            toast.error("User name is required");
+        if (username.trim() === '') {
+            toast.error("Username is required");
             return;
         }
 
-
-        
         try {
             setLoading(true);
 
             const formDataToSend = new FormData();
-            
             for (const key in formData) {
                 if (formData.hasOwnProperty(key)) {
                     formDataToSend.append(key, formData[key]);
@@ -159,39 +160,30 @@ const ProfilePage = () => {
                 formDataToSend.append('avatar', imageFile);
             }
 
-            for (let [key, value] of formDataToSend.entries()) {
-                console.log(`${key}: ${value}`);
-            }
-            console.log("jii vara");
-            // const response = await dispatch(createAccount(data)).unwrap();
-
-            const res = await dispatch(updateprofile({ userId, formDataToSend , token:user.token }))
-            console.log(res);
-
+            const res = await dispatch(updateprofile({ userId, formDataToSend, token: user.token }));
             setupdated(res.payload.data.success);
             setLoading(false);
             toast.success('Profile updated successfully!');
-            return navigate('/')
+            navigate('/');
         } catch (error) {
             console.error("Error updating profile: ", error);
             setLoading(false);
-
         }
     };
 
     return (
         <div>
             <Nav />
-            <div className='mt-16 '>
+            <div className='mt-16'>
                 {loading ? (
-                    <div className="flex justify-center  items-center min-h-screen">
+                    <div className="flex justify-center items-center min-h-screen">
                         <h1 className="text-4xl text-black dark:text-white">Loading</h1>
                     </div>
                 ) : (
-                    <div className='p-4 md:w-[80%] mx-auto '>
+                    <div className='p-4 md:w-[80%] mx-auto'>
                         <h1 className='dark:text-white heading'>Update Profile</h1>
 
-                        <div className=' mx-auto flex p-4 max-md:flex-col '>
+                        <div className='mx-auto flex p-4 max-md:flex-col'>
                             <div className='p-4 w-full flex flex-col gap-3'>
                                 <div className="flex gap-4 items-center relative justify-center w-100 mx-auto w-fit">
                                     <Label
@@ -208,7 +200,7 @@ const ProfilePage = () => {
                                         <i className="fa-solid fa-cloud-arrow-up"></i>
                                     </Label>
                                 </div>
-                                <div className='flex gap-3 mx-auto w-full justify-center '>
+                                <div className='flex gap-3 mx-auto w-full justify-center'>
                                     <TextInput value={formData.firstName} className='w-full' id="firstName" name="firstName" type="text" placeholder="First Name" required onChange={handleInputChange} />
                                     <TextInput value={formData.lastName} className='w-full' id="lastName" name="lastName" type="text" placeholder="Last Name" required onChange={handleInputChange} />
                                 </div>
@@ -219,12 +211,35 @@ const ProfilePage = () => {
                                 <div className='flex flex-col mx-auto w-full justify-center'>
                                     <TextInput disabled value={formData.email} className='w-full' id="email" name="email" type="text" placeholder="Email" required onChange={handleInputChange} />
                                 </div>
+                                <div className='flex gap-3 mx-auto w-full justify-center'>
+                                    <TextInput value={formData.student_id} className='w-full' id="student_id" name="student_id" type="text" placeholder="Student ID" onChange={handleInputChange} />
+                                    <TextInput value={formData.dob} className='w-full' id="dob" name="dob" type="date" placeholder="Date of Birth" onChange={handleInputChange} />
+                                </div>
+                                <div className='flex gap-3 mx-auto w-full justify-center'>
+
+                                    <TextInput value={formData.college_name} className='w-full' id="college_name" name="college_name" type="text" placeholder="College Name" onChange={handleInputChange} />
+                                    <TextInput value={formData.phone_number} className='w-full' id="phone_number" name="phone_number" type="text" placeholder="Phone Number" onChange={handleInputChange} />
+                                </div>
+
                             </div>
                             <div className='p-4 w-full md:mt-[1.3rem]'>
                                 <div className='w-full flex flex-col gap-4 items-center'>
                                     <div className='flex flex-col mx-auto w-full justify-center'>
                                         <Textarea value={formData.bio} className='w-full h-32' id="bio" name="bio" type="text" placeholder="Bio" onChange={handleInputChange} />
-                                        <p className='text-sm dark:text-white p-1'><span className={formData.bio.length > 800 ? 'text-red-500 ' : " text-green-300 " + '  text-sm'}>{800 - formData.bio.length > 0 ? 800 - formData.bio.length : 0}</span>/800 character left</p>
+                                        <p className='text-sm dark:text-white p-1'><span className={formData.bio.length > 800 ? 'text-red-500 ' : " text-green-300 " + ' text-sm'}>{800 - formData.bio.length > 0 ? 800 - formData.bio.length : 0}</span>/800 characters left</p>
+                                    </div>
+                                    <div className='flex gap-3 mx-auto w-full justify-center'>
+                                        <select name="academic_year" id="academic_year" value={formData.academic_year} onChange={handleInputChange} className="w-full">
+                                            <option value="FE">FE</option>
+                                            <option value="SE">SE</option>
+                                            <option value="TE">TE</option>
+                                            <option value="BE">BE</option>
+                                        </select>
+                                        <select name="department" id="department" value={formData.department} onChange={handleInputChange} className="w-full">
+                                            <option value="Computer">Computer</option>
+                                            <option value="Information Technology">Information Technology</option>
+                                        </select>
+
                                     </div>
                                     <div className='w-full flex flex-col gap-3'>
                                         <p className='text-sm dark:text-white p-1'>Add your social links</p>
